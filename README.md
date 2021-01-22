@@ -1,4 +1,4 @@
-# pwdShorten
+# pwdShort
 
 ![Alt text](./screenshot.png?raw=true)
 
