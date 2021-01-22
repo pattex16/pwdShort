@@ -2,7 +2,7 @@
 
 ![Alt text](./screenshot.png?raw=true)
 
-My directory shortener for bash and zsh $PS1 prompts inspired by [jonathonball's](https://github.com/jonathonball/pwd-shorten), but aims to be much faster on CPU cycles, because it is a compiled binary but nonetheless, configurable!
+My directory shortener for bash and zsh prompts inspired by [jonathonball's](https://github.com/jonathonball/pwd-shorten), that aims to be much faster on CPU cycles, because it is a compiled binary and nonetheless configurable!
 
 ## Requirements
 - gcc, or any compiler really
@@ -13,6 +13,7 @@ My directory shortener for bash and zsh $PS1 prompts inspired by [jonathonball's
 ## Usage
 pwdShort takes paths as standard arguments, first the current directory, then you home directory
 - add pwdShort to your path
+test it with
 - echo $(pwdShort $PWD $HOME)
 
 ## Bash
@@ -28,7 +29,7 @@ The directory path in your prompt will be shortened:
 
 becomes
 
-    /ver/oth/current_dir
+    /ver+/oth+/current_dir
 
 Home directories will be changed out as well:
 
@@ -36,7 +37,7 @@ Home directories will be changed out as well:
 
 becomes
 
-    ~/exa/directory
+    ~/exa+/directory
 
 Dotfiles directories can be treated differently:
 
@@ -44,10 +45,10 @@ Dotfiles directories can be treated differently:
 
 becomes
 
-    ~/.con/zsh
+    ~/.con+/zsh
 
 ## Configuration
-Despite my attempt to make this simple executable fast, it is still configurable through #define directives in main.c, you can change those to tweak the program as you like!
+Despite my attempt to make this simple executable fast, it is still configurable through #define directives in main.c, you can change those to tweak the prompt as you like!
 
 ### Config Values
 
@@ -78,3 +79,5 @@ If you want to display one more character of directories that start with a dot
     #define HOME_SYMBOL '~'
     #define REPLACEMENT_SYMBOL '+'
     #define SEPARATOR_SYMBOL '/'
+
+enjoy this! 
