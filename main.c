@@ -3,12 +3,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-//argc = arguments count
-//argv[0] = ./argv[1]Short
-//argv[1] = $ARGV[1]
-//argv[2] = $ARGV[2]
+#define SHORTENED_DIR_CHARS 3
+#define HOME_SYMBOL '~'
+#define SEPARATOR_SYMBOL '/'
+#define REPLACEMENT_SYMBOL '+'
 
-bool isCurrentDir(char* s)
+//argc = arguments count
+//argv[0] = ./pwdShort
+//argv[1] = $PWD
+//argv[2] = $HOME
+
+bool isCurrentDir(char* s) //check if you are examining the current directory
 {
   bool result = true;
   int i = 0;
@@ -22,48 +27,64 @@ bool isCurrentDir(char* s)
 
 int main(int argc, char* argv[])
 {
-
   long int pwdLen = strlen(argv[1]);
   long int homeLen = strlen(argv[2]);
 
   bool tilde = true;
   for (int i = 0; i < homeLen; i++)
-    if (argv[1][i] != argv[2][i]) //check if you are in a subdirectory of your argv[2]
+    if (argv[1][i] != argv[2][i]) //check if you are in a subdirectory of your home
       tilde = false;
 
   int i;
   if (tilde) {
-    printf("~"); //argv[2] directory is substituded with a ~
+    printf("%c", HOME_SYMBOL); //home directory is substituded with a HOME_SYMBOL
     i = homeLen - 1;
   } else
-    i = 0 - 1; //if you are not in a subdirectory of your argv[2], '/' is left
+    i = 0 - 1; //if you are not in a subdirectory of your home, '/' is left
 
-  int threeCharMax = 0;
+  if (argv[1][homeLen] == '\0') //if you are actually in your home dir stop printing
+    return 0;
+
+  int charMax = 0;
+  bool isReplacementPrinted = false;
   while (true) {
+
     i++;
 
-    if (isCurrentDir(&argv[1][i])) {  //current directory is printed with all of its characters
+    if (isCurrentDir(&argv[1][i])) { //current directory is printed with all of its characters
       printf("%c", argv[1][i]);
       if (argv[1][i + 1] == '\0')
         break;
       continue;
     }
-    if (argv[1][i] == '/') { //print each
-      threeCharMax = 0;
-      printf("%c", argv[1][i]);
+
+    if (charMax > SHORTENED_DIR_CHARS-1 && isReplacementPrinted==false){ //print the REPLACEMENT_SYMBOL
+      printf("%c",REPLACEMENT_SYMBOL);
+      isReplacementPrinted = true;
+    }
+
+    if (argv[1][i] == '/') { //print each SEPARATOR_SYMBOL
+      charMax = 0;
+      isReplacementPrinted = false;
+      printf("%c", SEPARATOR_SYMBOL);
       continue;
     }
-    if (!isCurrentDir(&argv[1][i]) && threeCharMax < 3) { //for each subdirectory print the first 3 chars
-      threeCharMax++;
-      if (argv[1][i] == '.'){ //.dotdirs should have 4 chars, including the dot
-        printf("%c%c", argv[1][i], argv[1][i+1]); 
+
+    if (!isCurrentDir(&argv[1][i]) && charMax < SHORTENED_DIR_CHARS) { //for each subdirectory print the first SHORTENED_DIR_CHARS chars
+      charMax++;
+      //comment from here...
+      if (argv[1][i] == '.') { //.dotdirs should have SHORTENED_DIR_CHARS+1 chars, including the dot
+        printf(".%c", argv[1][i + 1]);
         i++;
       }
+      //...to here if you dont want to have one extra char when shortening dotdirs
       else
-        printf("%c", argv[1][i]);
+        printf("%c", argv[1][i]); //print the SHORTENED_DIR_CHARS characters
+      isReplacementPrinted = false;
       continue;
     }
+
   }
-  printf("%c",'\0'); //end with a nice '\0'
+  printf("%c", '\0'); //end with a nice '\0'
   return 0;
 }

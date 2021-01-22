@@ -1,59 +1,80 @@
 # pwdShorten
-My directory shortener for bash and zsh $PS1 prompts inspired by [jonathonball's](https://github.com/jonathonball/pwd-shorten)
+
+![Alt text](./screenshot.png?raw=true)
+
+My directory shortener for bash and zsh $PS1 prompts inspired by [jonathonball's](https://github.com/jonathonball/pwd-shorten), but aims to be much faster on CPU cycles, because it is a compiled binary but nonetheless, configurable!
 
 ## Requirements
 - gcc, or any compiler really
 
+## Compilation
+- gcc main.c -o pwdShort
+
 ## Usage
-- gcc main.c -o pwdShorten
-- pwdShorten $PWD $HOME
+pwdShort takes paths as standard arguments, first the current directory, then you home directory
+- add pwdShort to your path
+- echo $(pwdShort $PWD $HOME)
 
-### bash
-1. Make `pwd-shorten` available in your `$PATH`.
-2. Add `$(pwd-shorten)` to your `$PS1` prompt.
+## Bash
+- add $(pwdShort $PWD $HOME) to your PS1
 
-### zsh
-1. Make `pwd-shorten` available in your `$PATH`.
-2. Add `$(pwd-shorten)` to your `*.zsh-theme` file.
+## Zsh (this is my prompt!)
+- PROMPT=' %B%F{green}%n%f%b@%B%F{blue}$(hostname | cut -c -5)%f%b:%F{yellow}%B$(pwdShort $PWD $HOME)%b%f%# '
 
 ## Example Output
 The directory path in your prompt will be shortened:
 
-    /very-long-directory-name/another-long-one/tacos.txt
+    /very-long-directory-name/other-long-one/current_dir
 
 becomes
 
-    /ver+/ano+/tacos.txt
+    /ver/oth/current_dir
 
 Home directories will be changed out as well:
 
-    /home/jonball/example/directory
+    /home/selz/example/directory
 
 becomes
 
-    ~/exa+/directory
+    ~/exa/directory
+
+Dotfiles directories can be treated differently:
+
+    /home/selz/.config/zsh
+
+becomes
+
+    ~/.con/zsh
 
 ## Configuration
-You can override these defaults by creating a config file in `~/.config/pwd-shorten` called `config.ini` containing a top-level section titled `[settings]`.
+Despite my attempt to make this simple executable fast, it is still configurable through #define directives in main.c, you can change those to tweak the program as you like!
 
 ### Config Values
-The following values can be set in your config
 
-#### `break_length`
-Length at which a directory name will be shortened
-- default: `5`
+#### `SHORTENED_DIR_CHARS`
+How much of the original subdirectory name to keep
+- default: `3`
 
-#### `keep_length`
-How much of the original directory name to keep
-- default `3`
+#### `HOME_SYMBOL`
+The home symbol which will replace the home path
+- default `~`
 
-#### `replacement`
+#### `REPLACEMENT_SYMBOL`
 Symbol used to indicate that a directory name has been shortened.
 - default `+`
+
+#### `SEPARATOR_SYMBOL`
+If you want to get fancy with custom separator symbols :P
+- default `/`
+
+#### `Dotdirs with one more char`
+If you want to display one more character of directories that start with a dot
+- by default i keep this on
 
 ### Example Configuration
 
     [settings]
-    break_length = 5
-    keep_length  = 3
-    replacement  = +
+    #define SHORTENED_DIR_CHARS 3
+    #define HOME_SYMBOL '~'
+    #define REPLACEMENT_SYMBOL '+'
+    #define SEPARATOR_SYMBOL '/'
